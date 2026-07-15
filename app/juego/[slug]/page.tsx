@@ -12,7 +12,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
   const { games, loaded } = useGames()
   const [activeTab, setActiveTab] = useState<'acerca' | 'guia'>('acerca')
 
-  const game = games.find(g => g.slug === slug)
+  const game = games.find(g => g.slug === slug || g.id === slug)
   const discount = game ? calcDiscount(game.originalPrice, game.salePrice) : 0
   const waMessage = game
     ? `Hola GamePeru+20, me interesa comprar el juego: ${game.title}`
@@ -279,7 +279,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
             {related.map(g => {
               const d = calcDiscount(g.originalPrice, g.salePrice)
               return (
-                <Link key={g.id} href={`/juego/${g.slug}`} className="group">
+                <Link key={g.id} href={g.slug ? `/juego/${g.slug}` : `/juego/${g.id}`} className="group">
                   <div className="relative rounded-xl overflow-hidden bg-bg-card border border-white/5 group-hover:border-brand-orange/40 transition-all group-hover:-translate-y-1 duration-300">
                     <div className="relative" style={{ aspectRatio: '2/3' }}>
                       <img

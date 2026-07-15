@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { Facebook, Instagram, MessageCircle } from 'lucide-react'
 
 export default function Footer() {
@@ -9,7 +10,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <p className="text-xs text-gray-500 font-semibold mb-3 tracking-widest uppercase">Aceptamos:</p>
           <div className="flex flex-wrap gap-3 items-center">
-            {['Visa', 'MasterCard', 'Yape'].map(m => (
+            {['Yape'].map(m => (
               <span
                 key={m}
                 className="px-3 py-1.5 bg-bg-card border border-white/10 rounded-lg text-xs font-semibold text-gray-300"
@@ -27,7 +28,13 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
-              <div className="w-8 h-8 bg-brand-orange rounded-lg flex items-center justify-center font-black text-white text-sm">KG</div>
+              <Image
+                src="/images/logo_game.jpg"
+                alt="Logo GamePeru+20"
+                width={32}
+                height={32}
+                className="w-8 h-8 rounded-lg object-cover"
+              />
               <span className="font-black text-white text-lg">GamePeru+20</span>
             </Link>
             <p className="text-gray-500 text-sm leading-relaxed">
@@ -75,7 +82,7 @@ export default function Footer() {
             <h4 className="text-white font-bold text-sm mb-4 tracking-wide uppercase">Síguenos en</h4>
             <div className="flex gap-3">
               <a
-                href="https://www.facebook.com/kirogamingperu/"
+                href="https://www.facebook.com/GamePeru20/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2.5 bg-bg-card border border-white/10 hover:border-brand-orange/40 text-gray-400 hover:text-white rounded-xl transition-all"

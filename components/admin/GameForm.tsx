@@ -63,7 +63,11 @@ export default function GameForm({ initial, onSubmit, onCancel, loading }: GameF
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.title.trim()) return
-    onSubmit(form)
+    const normalizedSlug = slugify(form.slug || form.title)
+    onSubmit({
+      ...form,
+      slug: normalizedSlug,
+    })
   }
 
   const field = 'block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5'

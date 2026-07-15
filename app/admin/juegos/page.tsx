@@ -15,8 +15,8 @@ export default function AdminJuegosPage() {
     g.platform.toLowerCase().includes(search.toLowerCase())
   )
 
-  const handleDelete = (id: string) => {
-    deleteGame(id)
+  const handleDelete = async (id: string) => {
+    await deleteGame(id)
     setConfirmDelete(null)
   }
 

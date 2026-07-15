@@ -8,15 +8,26 @@ import { ArrowLeft } from 'lucide-react'
 
 export default function NuevoJuegoPage() {
   const router = useRouter()
-  const { addGame } = useGames()
+  const { games, addGame } = useGames()
 
-  const handleSubmit = (data: Omit<Game, 'id' | 'createdAt'>) => {
-    const game: Game = {
+  const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+  const uniqueSlug = (base: string) => {
+    const safeBase = slugify(base) || `juego-${Date.now()}`
+    const used = new Set(games.map(g => g.slug))
+    if (!used.has(safeBase)) return safeBase
+    let i = 2
+    while (used.has(`${safeBase}-${i}`)) i++
+    return `${safeBase}-${i}`
+  }
+
+  const handleSubmit = async (data: Omit<Game, 'id' | 'createdAt'>) => {
+    const slug = uniqueSlug(data.slug || data.title)
+    const gamePayload: Omit<Game, 'id' | 'createdAt'> = {
       ...data,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
+      slug,
     }
-    addGame(game)
+    await addGame(gamePayload)
     router.push('/admin/juegos')
   }
 

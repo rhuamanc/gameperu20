@@ -9,13 +9,14 @@ interface GameCardProps {
 
 export default function GameCard({ game, size = 'md' }: GameCardProps) {
   const discount = calcDiscount(game.originalPrice, game.salePrice)
+  const targetPath = game.slug ? `/juego/${game.slug}` : `/juego/${game.id}`
 
   const widths = { sm: 'w-36 sm:w-40', md: 'w-44 sm:w-48 md:w-52', lg: 'w-52 sm:w-56 md:w-60' }
   const imgH = { sm: 'h-52', md: 'h-64', lg: 'h-72' }
 
   return (
     <Link
-      href={`/juego/${game.slug}`}
+      href={targetPath}
       className={`${widths[size]} flex-shrink-0 group cursor-pointer`}
     >
       <div className="relative overflow-hidden rounded-xl bg-bg-card border border-white/5 group-hover:border-brand-orange/40 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-brand-orange/10 group-hover:-translate-y-1">

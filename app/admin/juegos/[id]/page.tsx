@@ -14,8 +14,20 @@ export default function EditarJuegoPage({ params }: { params: Promise<{ id: stri
 
   const game = games.find(g => g.id === id)
 
-  const handleSubmit = (data: Omit<Game, 'id' | 'createdAt'>) => {
-    updateGame(id, data)
+  const slugify = (str: string) => str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+  const uniqueSlug = (base: string, currentId: string) => {
+    const safeBase = slugify(base) || `juego-${Date.now()}`
+    const used = new Set(games.filter(g => g.id !== currentId).map(g => g.slug))
+    if (!used.has(safeBase)) return safeBase
+    let i = 2
+    while (used.has(`${safeBase}-${i}`)) i++
+    return `${safeBase}-${i}`
+  }
+
+  const handleSubmit = async (data: Omit<Game, 'id' | 'createdAt'>) => {
+    const slug = uniqueSlug(data.slug || data.title, id)
+    await updateGame(id, { ...data, slug })
     router.push('/admin/juegos')
   }
 
