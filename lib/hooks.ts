@@ -7,6 +7,7 @@ import { SEED_GAMES, SEED_BANNERS } from './data'
 const GAMES_KEY = 'kgstore_games'
 const BANNERS_KEY = 'kgstore_banners'
 const GAMES_MIGRATED_KEY = 'kgstore_games_migrated_to_json_v1'
+const BANNERS_MIGRATED_KEY = 'kgstore_banners_migrated_to_json_v1'
 
 function loadFromStorage<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback
@@ -143,40 +144,86 @@ export function useBanners() {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const stored = loadFromStorage<Banner[]>(BANNERS_KEY, SEED_BANNERS)
-    setBannersState(stored.sort((a, b) => a.order - b.order))
-    setLoaded(true)
+    let mounted = true
+
+    const fetchBanners = async () => {
+      try {
+        if (typeof window !== 'undefined') {
+          const alreadyMigrated = localStorage.getItem(BANNERS_MIGRATED_KEY) === '1'
+          if (!alreadyMigrated) {
+            const stored = loadFromStorage<Banner[]>(BANNERS_KEY, [])
+            if (stored.length > 0) {
+              await fetch('/api/banners/migrate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ banners: stored }),
+              })
+            }
+            localStorage.setItem(BANNERS_MIGRATED_KEY, '1')
+          }
+        }
+
+        const res = await fetch('/api/banners', { cache: 'no-store' })
+        if (!res.ok) throw new Error('failed')
+        const data = (await res.json()) as Banner[]
+        if (mounted) {
+          setBannersState([...data].sort((a, b) => a.order - b.order))
+          setLoaded(true)
+        }
+      } catch {
+        const stored = loadFromStorage<Banner[]>(BANNERS_KEY, SEED_BANNERS)
+        if (mounted) {
+          setBannersState(stored.sort((a, b) => a.order - b.order))
+          setLoaded(true)
+        }
+      }
+    }
+
+    fetchBanners()
+
+    return () => {
+      mounted = false
+    }
   }, [])
 
-  const saveBanners = useCallback((next: Banner[]) => {
-    const sorted = [...next].sort((a, b) => a.order - b.order)
-    saveToStorage(BANNERS_KEY, sorted)
-    setBannersState(sorted)
-  }, [])
-
-  const addBanner = useCallback((b: Banner) => {
+  const setBanners = useCallback((updater: Banner[] | ((prev: Banner[]) => Banner[])) => {
     setBannersState(prev => {
-      const next = [...prev, b].sort((a, b2) => a.order - b2.order)
-      saveToStorage(BANNERS_KEY, next)
-      return next
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      return [...next].sort((a, b) => a.order - b.order)
     })
   }, [])
 
-  const updateBanner = useCallback((id: string, updates: Partial<Banner>) => {
-    setBannersState(prev => {
-      const next = prev.map(b => b.id === id ? { ...b, ...updates } : b).sort((a, b) => a.order - b.order)
-      saveToStorage(BANNERS_KEY, next)
-      return next
+  const addBanner = useCallback(async (banner: Omit<Banner, 'id'>) => {
+    const res = await fetch('/api/banners', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(banner),
     })
-  }, [])
+    if (!res.ok) throw new Error('No se pudo crear el banner')
+    const created = (await res.json()) as Banner
+    setBanners(prev => [created, ...prev])
+    return created
+  }, [setBanners])
 
-  const deleteBanner = useCallback((id: string) => {
-    setBannersState(prev => {
-      const next = prev.filter(b => b.id !== id)
-      saveToStorage(BANNERS_KEY, next)
-      return next
+  const updateBanner = useCallback(async (id: string, updates: Partial<Banner>) => {
+    const res = await fetch(`/api/banners/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
     })
-  }, [])
+    if (!res.ok) throw new Error('No se pudo actualizar el banner')
+    const updated = (await res.json()) as Banner
+    setBanners(prev => prev.map(b => (b.id === id ? updated : b)))
+    return updated
+  }, [setBanners])
 
-  return { banners, loaded, saveBanners, addBanner, updateBanner, deleteBanner }
+  const deleteBanner = useCallback(async (id: string) => {
+    const res = await fetch(`/api/banners/${id}`, {
+      method: 'DELETE',
+    })
+    if (!res.ok) throw new Error('No se pudo eliminar el banner')
+    setBanners(prev => prev.filter(b => b.id !== id))
+  }, [setBanners])
+
+  return { banners, loaded, addBanner, updateBanner, deleteBanner }
 }

@@ -38,17 +38,17 @@ export default function AdminBannersPage() {
     setCreating(false)
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.title.trim()) return
     const discount = form.originalPrice > 0
       ? Math.round(((form.originalPrice - form.salePrice) / form.originalPrice) * 100)
       : form.discount
 
     if (creating) {
-      addBanner({ ...form, discount, id: Date.now().toString() })
+      await addBanner({ ...form, discount })
       setCreating(false)
     } else if (editing) {
-      updateBanner(editing.id, { ...form, discount })
+      await updateBanner(editing.id, { ...form, discount })
       setEditing(null)
     }
   }
@@ -201,7 +201,9 @@ export default function AdminBannersPage() {
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button
-                      onClick={() => updateBanner(banner.id, { active: !banner.active })}
+                      onClick={async () => {
+                        await updateBanner(banner.id, { active: !banner.active })
+                      }}
                       className={`p-2 border rounded-lg transition-all ${banner.active ? 'border-brand-green/40 text-brand-green hover:bg-brand-green/10' : 'border-white/10 text-gray-500 hover:text-white'}`}
                       title={banner.active ? 'Desactivar' : 'Activar'}
                     >
@@ -234,7 +236,7 @@ export default function AdminBannersPage() {
             <h3 className="text-lg font-black text-white mb-2">¿Eliminar banner?</h3>
             <p className="text-gray-400 text-sm mb-6">Esta acción no se puede deshacer.</p>
             <div className="flex gap-3">
-              <button onClick={() => { deleteBanner(confirmDelete); setConfirmDelete(null) }}
+              <button onClick={async () => { await deleteBanner(confirmDelete); setConfirmDelete(null) }}
                 className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all">
                 Eliminar
               </button>
