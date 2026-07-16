@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Game, ALL_CATEGORIES } from '@/lib/types'
 import { calcDiscount } from '@/lib/data'
+import RichTextEditor from './RichTextEditor'
 
 interface GameFormProps {
   initial?: Partial<Game>
@@ -27,8 +28,11 @@ const emptyForm: Omit<Game, 'id' | 'createdAt'> = {
   isNew: false,
   accountType: 'offline',
   description: '',
+  aboutProduct: '',
+  redeemGuide: '',
   badge: '',
 }
+
 
 function slugify(str: string) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
@@ -216,16 +220,26 @@ export default function GameForm({ initial, onSubmit, onCancel, loading }: GameF
         <p className="text-xs text-gray-500 mt-1">Se mostrará como segunda lámina en el carrusel del detalle.</p>
       </div>
 
-      {/* Description */}
-      <div>
-        <label className={field}>Descripción</label>
-        <textarea
-          value={form.description}
-          onChange={e => set('description', e.target.value)}
-          rows={3}
-          placeholder="Breve descripción del juego..."
-          className={input + ' resize-none'}
-        />
+      {/* Detail tabs content */}
+      <div className="grid grid-cols-1 gap-4">
+        <div>
+          <label className={field}>Contenido: ACERCA DEL PRODUCTO</label>
+          <RichTextEditor
+            value={form.aboutProduct || ''}
+            onChange={value => set('aboutProduct', value)}
+            placeholder="Escribe el contenido de ACERCA DEL PRODUCTO..."
+          />
+          <p className="text-xs text-gray-500 mt-1">Puedes usar colores, viñetas, negrita, subrayado, links y más.</p>
+        </div>
+        <div>
+          <label className={field}>Contenido: GUÍA DE CANJE</label>
+          <RichTextEditor
+            value={form.redeemGuide || ''}
+            onChange={value => set('redeemGuide', value)}
+            placeholder="Escribe el contenido de GUÍA DE CANJE..."
+          />
+          <p className="text-xs text-gray-500 mt-1">Si está vacío, se muestra la guía por defecto.</p>
+        </div>
       </div>
 
       {/* Badge */}

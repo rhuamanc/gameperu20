@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { ChevronLeft, ChevronRight, Shield, Zap, Clock, MessageCircle, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
 import PaymentModal from '@/components/PaymentModal'
+import sanitizeHtml from 'sanitize-html'
 
 export default function JuegoDetallePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
@@ -17,6 +18,32 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
 
   const game = games.find(g => g.slug === slug || g.id === slug)
   const discount = game ? calcDiscount(game.originalPrice, game.salePrice) : 0
+  const aboutHtml = sanitizeHtml((game?.aboutProduct || '').trim(), {
+    allowedTags: ['p', 'br', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a', 'span'],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel'],
+      span: ['style'],
+      p: ['style'],
+      li: ['style'],
+      h1: ['style'],
+      h2: ['style'],
+      h3: ['style'],
+    },
+    allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+  })
+  const guideHtml = sanitizeHtml((game?.redeemGuide || '').trim(), {
+    allowedTags: ['p', 'br', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'blockquote', 'a', 'span'],
+    allowedAttributes: {
+      a: ['href', 'target', 'rel'],
+      span: ['style'],
+      p: ['style'],
+      li: ['style'],
+      h1: ['style'],
+      h2: ['style'],
+      h3: ['style'],
+    },
+    allowedSchemes: ['http', 'https', 'mailto', 'tel'],
+  })
   const waMessage = game
     ? `Hola GamePeru+20, me interesa comprar el juego: ${game.title}`
     : 'Hola GamePeru+20, estoy interesado en un juego.'
@@ -234,42 +261,60 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
 
           {activeTab === 'acerca' ? (
             <div className="text-gray-400 text-sm leading-relaxed space-y-3">
-              <p>{game.description || 'Disfruta de este increíble juego con entrega inmediata e instalación incluida.'}</p>
-              <div className="space-y-2 pt-2">
-                {[
-                  'Acceso permanente: Juega cuando quieras, tu registro siempre estará en Kirogaming.',
-                  'Progreso: Guarda tu partida de forma segura, sin problemas.',
-                  'Disfruta sin límites: Disfruta del juego todo el tiempo que desees.',
-                  'Asistencia: Soporte constante y Garantía, siempre puedes contactarnos.',
-                ].map((item, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <CheckCircle size={15} className="text-brand-green flex-shrink-0 mt-0.5" />
-                    <span>{item}</span>
+              {aboutHtml ? (
+                <div
+                  className="prose prose-invert max-w-none prose-p:text-gray-400 prose-li:text-gray-400 prose-strong:text-white prose-headings:text-white prose-ul:my-2 prose-ol:my-2"
+                  dangerouslySetInnerHTML={{ __html: aboutHtml }}
+                />
+              ) : (
+                <>
+                  <p>{game.description || 'Disfruta de este increíble juego con entrega inmediata e instalación incluida.'}</p>
+                  <div className="space-y-2 pt-2">
+                    {[
+                      'Acceso permanente: Juega cuando quieras, tu registro siempre estará en Kirogaming.',
+                      'Progreso: Guarda tu partida de forma segura, sin problemas.',
+                      'Disfruta sin límites: Disfruta del juego todo el tiempo que desees.',
+                      'Asistencia: Soporte constante y Garantía, siempre puedes contactarnos.',
+                    ].map((item, i) => (
+                      <div key={i} className="flex items-start gap-2">
+                        <CheckCircle size={15} className="text-brand-green flex-shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </>
+              )}
             </div>
           ) : (
             <div className="text-gray-400 text-sm leading-relaxed space-y-3">
-              <p>
-                Entrega de un código para canjear el juego en la plataforma de Kirogaming, que
-                luego desde la biblioteca podrás liberar el juego (Offline) para que se instale,
-                en la cuenta de Steam que tienes instalado en tu PC.
-              </p>
-              <p>
-                Se indica un instructivo claro de los pasos a realizar para salvaguardar la
-                integridad de la cuenta y disfrutar de su jugabilidad.
-              </p>
-              <div className="bg-bg-card border border-white/5 rounded-xl p-4 mt-4">
-                <p className="text-white font-semibold text-sm mb-2">¿Cómo funciona?</p>
-                <ol className="space-y-2 text-xs text-gray-400 list-decimal list-inside">
-                  <li>Contáctanos por WhatsApp con el nombre del juego</li>
-                  <li>Coordina el pago por tu método preferido</li>
-                  <li>Nos conectamos por Rustdesk (conexión remota)</li>
-                  <li>Activamos el juego directamente en tu Steam</li>
-                  <li>¡Listo! El juego aparece en tu biblioteca</li>
-                </ol>
-              </div>
+              {guideHtml ? (
+                <div
+                  className="prose prose-invert max-w-none prose-p:text-gray-400 prose-li:text-gray-400 prose-strong:text-white prose-headings:text-white prose-ul:my-2 prose-ol:my-2"
+                  dangerouslySetInnerHTML={{ __html: guideHtml }}
+                />
+              ) : (
+                <>
+                  <p>
+                    Entrega de un código para canjear el juego en la plataforma de Kirogaming, que
+                    luego desde la biblioteca podrás liberar el juego (Offline) para que se instale,
+                    en la cuenta de Steam que tienes instalado en tu PC.
+                  </p>
+                  <p>
+                    Se indica un instructivo claro de los pasos a realizar para salvaguardar la
+                    integridad de la cuenta y disfrutar de su jugabilidad.
+                  </p>
+                  <div className="bg-bg-card border border-white/5 rounded-xl p-4 mt-4">
+                    <p className="text-white font-semibold text-sm mb-2">¿Cómo funciona?</p>
+                    <ol className="space-y-2 text-xs text-gray-400 list-decimal list-inside">
+                      <li>Contáctanos por WhatsApp con el nombre del juego</li>
+                      <li>Coordina el pago por tu método preferido</li>
+                      <li>Nos conectamos por Rustdesk (conexión remota)</li>
+                      <li>Activamos el juego directamente en tu Steam</li>
+                      <li>¡Listo! El juego aparece en tu biblioteca</li>
+                    </ol>
+                  </div>
+                </>
+              )}
             </div>
           )}
         </div>

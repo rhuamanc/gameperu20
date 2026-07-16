@@ -15,6 +15,8 @@ export interface Game {
   isNew: boolean
   accountType: 'offline' | 'online'
   description: string
+  aboutProduct?: string
+  redeemGuide?: string
   releaseDate?: string
   badge?: string // 'ESTRENO', 'PREVENTA', etc.
   createdAt: string
