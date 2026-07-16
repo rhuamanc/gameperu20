@@ -30,7 +30,7 @@ body {
   border-radius: 99px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #f97316;
+  background: #2563eb;
 }
 
 /* Hide scrollbar on horizontal scroll containers */
@@ -51,6 +51,6 @@ body {
 
 /* Selection */
 ::selection {
-  background-color: #f97316;
+  background-color: #dc2626;
   color: white;
 }

@@ -5,19 +5,21 @@ import { calcDiscount } from '@/lib/data'
 interface GameCardProps {
   game: Game
   size?: 'sm' | 'md' | 'lg'
+  fluid?: boolean
 }
 
-export default function GameCard({ game, size = 'md' }: GameCardProps) {
+export default function GameCard({ game, size = 'md', fluid = false }: GameCardProps) {
   const discount = calcDiscount(game.originalPrice, game.salePrice)
   const targetPath = game.slug ? `/juego/${game.slug}` : `/juego/${game.id}`
 
   const widths = { sm: 'w-36 sm:w-40', md: 'w-44 sm:w-48 md:w-52', lg: 'w-52 sm:w-56 md:w-60' }
   const imgH = { sm: 'h-52', md: 'h-64', lg: 'h-72' }
+  const imageFitClass = fluid ? 'object-contain' : 'object-cover'
 
   return (
     <Link
       href={targetPath}
-      className={`${widths[size]} flex-shrink-0 group cursor-pointer`}
+      className={`${fluid ? 'w-full min-w-0' : `${widths[size]} flex-shrink-0`} group cursor-pointer`}
     >
       <div className="relative overflow-hidden rounded-xl bg-bg-card border border-white/5 group-hover:border-brand-orange/40 transition-all duration-300 group-hover:shadow-lg group-hover:shadow-brand-orange/10 group-hover:-translate-y-1">
         {/* Cover image */}
@@ -25,10 +27,10 @@ export default function GameCard({ game, size = 'md' }: GameCardProps) {
           <img
             src={game.coverImage}
             alt={game.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className={`w-full h-full ${imageFitClass} group-hover:scale-105 transition-transform duration-500`}
             onError={(e) => {
               const target = e.target as HTMLImageElement
-              target.src = `https://placehold.co/280x390/1a1a2e/f97316?text=${encodeURIComponent(game.title.substring(0, 15))}`
+              target.src = `https://placehold.co/280x390/1a1a2e/2563eb?text=${encodeURIComponent(game.title.substring(0, 15))}`
             }}
           />
 

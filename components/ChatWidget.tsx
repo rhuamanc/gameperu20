@@ -25,7 +25,7 @@ export default function ChatWidget() {
             <img src="/images/logo_game.jpg" alt="GamePeru+20" className="w-10 h-10 rounded-full object-cover" />
             <div>
               <p className="font-black text-white text-sm">¡Hola! GamePeru+20</p>
-              <p className="text-orange-100 text-xs">Soporte constante</p>
+              <p className="text-blue-100 text-xs">Soporte constante</p>
             </div>
           </div>
           {/* Body */}
@@ -37,7 +37,7 @@ export default function ChatWidget() {
           </div>
           <div className="px-4 pb-4">
             <a
-              href="https://wa.me/51905882260?text=Hola%20KiroGaming%2C%20estoy%20interesado%20en%20un%20juego."
+              href="https://wa.me/51950352842?text=Hola%20GamePeru%2B20%2C%20estoy%20interesado%20en%20un%20juego."
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-2.5 bg-brand-green hover:bg-brand-greenDark text-white font-semibold rounded-xl text-sm transition-all"

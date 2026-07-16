@@ -19,6 +19,7 @@ const emptyForm: Omit<Game, 'id' | 'createdAt'> = {
   salePrice: 0,
   coverImage: '',
   horizontalImage: '',
+  gameplayUrl: '',
   categories: [],
   isHot: false,
   hasDenuvo: false,
@@ -200,6 +201,19 @@ export default function GameForm({ initial, onSubmit, onCancel, loading }: GameF
             />
           )}
         </div>
+      </div>
+
+      {/* Gameplay */}
+      <div>
+        <label className={field}>URL Gameplay YouTube (opcional)</label>
+        <input
+          type="url"
+          value={form.gameplayUrl || ''}
+          onChange={e => set('gameplayUrl', e.target.value)}
+          placeholder="https://www.youtube.com/watch?v=..."
+          className={input}
+        />
+        <p className="text-xs text-gray-500 mt-1">Se mostrará como segunda lámina en el carrusel del detalle.</p>
       </div>
 
       {/* Description */}

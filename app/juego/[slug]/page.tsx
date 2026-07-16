@@ -4,13 +4,16 @@ import { use } from 'react'
 import { useGames } from '@/lib/hooks'
 import { calcDiscount } from '@/lib/data'
 import Link from 'next/link'
-import { ArrowLeft, Shield, Zap, Clock, MessageCircle, ExternalLink, CheckCircle } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Shield, Zap, Clock, MessageCircle, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
+import PaymentModal from '@/components/PaymentModal'
 
 export default function JuegoDetallePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params)
   const { games, loaded } = useGames()
   const [activeTab, setActiveTab] = useState<'acerca' | 'guia'>('acerca')
+  const [mediaIndex, setMediaIndex] = useState(0)
+  const [showPaymentModal, setShowPaymentModal] = useState(false)
 
   const game = games.find(g => g.slug === slug || g.id === slug)
   const discount = game ? calcDiscount(game.originalPrice, game.salePrice) : 0
@@ -24,6 +27,49 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
         .filter(g => g.id !== game.id && g.categories.some(c => game.categories.includes(c)))
         .slice(0, 6)
     : []
+
+  const toYouTubeEmbed = (url?: string) => {
+    if (!url) return null
+    try {
+      const withParams = (base: string) => {
+        const embed = new URL(base)
+        embed.searchParams.set('autoplay', '1')
+        embed.searchParams.set('mute', '0')
+        embed.searchParams.set('volume', '100')
+        embed.searchParams.set('playsinline', '1')
+        embed.searchParams.set('rel', '0')
+        embed.searchParams.set('enablejsapi', '1')
+        return embed.toString()
+      }
+
+      const parsed = new URL(url)
+      if (parsed.hostname.includes('youtu.be')) {
+        const id = parsed.pathname.replace('/', '')
+        return id ? withParams(`https://www.youtube.com/embed/${id}`) : null
+      }
+      if (parsed.hostname.includes('youtube.com')) {
+        const id = parsed.searchParams.get('v')
+        if (id) return withParams(`https://www.youtube.com/embed/${id}`)
+        if (parsed.pathname.startsWith('/embed/')) return withParams(`https://www.youtube.com${parsed.pathname}`)
+      }
+      return null
+    } catch {
+      return null
+    }
+  }
+
+  const gameplayEmbed = toYouTubeEmbed(game?.gameplayUrl)
+  const mediaItems: Array<{ type: 'image' | 'video' }> = gameplayEmbed
+    ? [{ type: 'video' }, { type: 'image' }]
+    : [{ type: 'image' }]
+
+  const goPrevMedia = () => {
+    setMediaIndex(prev => (prev - 1 + mediaItems.length) % mediaItems.length)
+  }
+
+  const goNextMedia = () => {
+    setMediaIndex(prev => (prev + 1) % mediaItems.length)
+  }
 
   if (!loaded) {
     return (
@@ -60,18 +106,60 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
       {/* Main layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* LEFT: Cover + screenshots placeholder */}
-        <div className="lg:col-span-1">
-          <div className="relative rounded-2xl overflow-hidden bg-bg-card border border-white/5">
-            <img
-              src={game.coverImage}
-              alt={game.title}
-              className="w-full object-cover"
-              style={{ aspectRatio: '2/3' }}
-              onError={e => {
-                const t = e.target as HTMLImageElement
-                t.src = `https://placehold.co/400x600/1a1a2e/f97316?text=${encodeURIComponent(game.title.substring(0, 16))}`
-              }}
-            />
+        <div className="lg:col-span-2">
+          <div className="relative h-[420px] sm:h-[520px] lg:h-[560px] xl:h-[620px] rounded-2xl overflow-hidden bg-bg-card border border-white/5">
+            {mediaItems[mediaIndex]?.type === 'video' && gameplayEmbed ? (
+              <iframe
+                src={gameplayEmbed}
+                title={`Gameplay de ${game.title}`}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            ) : (
+              <img
+                src={game.coverImage}
+                alt={game.title}
+                className="w-full h-full object-contain"
+                onError={e => {
+                  const t = e.target as HTMLImageElement
+                  t.src = `https://placehold.co/400x600/1a1a2e/2563eb?text=${encodeURIComponent(game.title.substring(0, 16))}`
+                }}
+              />
+            )}
+
+            {mediaItems.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={goPrevMedia}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all"
+                  aria-label="Ver media anterior"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  type="button"
+                  onClick={goNextMedia}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full transition-all"
+                  aria-label="Ver media siguiente"
+                >
+                  <ChevronRight size={20} />
+                </button>
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                  {mediaItems.map((item, idx) => (
+                    <button
+                      key={`${item.type}-${idx}`}
+                      type="button"
+                      onClick={() => setMediaIndex(idx)}
+                      aria-label={item.type === 'video' ? 'Ver gameplay' : 'Ver imagen'}
+                      className={`h-2 rounded-full transition-all ${idx === mediaIndex ? 'w-6 bg-brand-orange' : 'w-2 bg-white/40'}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
             {/* Badges overlay */}
             <div className="absolute top-3 left-3 flex flex-col gap-1.5">
               {discount > 0 && (
@@ -101,7 +189,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
         </div>
 
         {/* CENTER: Info */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-3 lg:row-start-2">
           {/* Title */}
           <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight mb-3">
             {game.title}
@@ -187,7 +275,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
         </div>
 
         {/* RIGHT: Purchase box */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 lg:col-start-3 lg:row-start-1">
           <div className="bg-bg-card border border-white/5 rounded-2xl p-5 sticky top-20">
             {/* Price */}
             <div className="mb-5">
@@ -220,16 +308,14 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
 
             {/* CTA Buttons */}
             <div className="space-y-3 mb-5">
-              <a
-                href={`https://wa.me/51905882260?text=${encodeURIComponent(waMessage)}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setShowPaymentModal(true)}
                 className="flex items-center justify-center gap-2 w-full py-3 bg-brand-orange hover:bg-brand-orangeLight text-white font-black rounded-xl transition-all hover:scale-[1.02] text-sm"
               >
                 Comprar Ahora
-              </a>
+              </button>
               <a
-                href={`https://wa.me/51905882260?text=${encodeURIComponent(waMessage)}`}
+                href={`https://wa.me/51950352842?text=${encodeURIComponent(waMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3 bg-bg-hover hover:bg-bg-card border border-white/10 hover:border-brand-orange/40 text-white font-bold rounded-xl transition-all text-sm"
@@ -257,7 +343,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
             <div>
               <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider mb-2">Métodos de pago</p>
               <div className="flex flex-wrap gap-2">
-                {['Visa', 'MasterCard', 'Yape', 'Plin', 'PayPal', 'Binance'].map(m => (
+                {['Yape'].map(m => (
                   <span
                     key={m}
                     className="px-2 py-1 bg-bg-hover border border-white/10 rounded-lg text-xs text-gray-300 font-medium"
@@ -279,7 +365,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
             {related.map(g => {
               const d = calcDiscount(g.originalPrice, g.salePrice)
               return (
-                <Link key={g.id} href={g.slug ? `/juego/${g.slug}` : `/juego/${g.id}`} className="group">
+                <Link key={g.id} href={`/juego/${g.slug}`} className="group">
                   <div className="relative rounded-xl overflow-hidden bg-bg-card border border-white/5 group-hover:border-brand-orange/40 transition-all group-hover:-translate-y-1 duration-300">
                     <div className="relative" style={{ aspectRatio: '2/3' }}>
                       <img
@@ -288,7 +374,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         onError={e => {
                           const t = e.target as HTMLImageElement
-                          t.src = `https://placehold.co/200x300/1a1a2e/f97316?text=${encodeURIComponent(g.title.substring(0, 10))}`
+                          t.src = `https://placehold.co/200x300/1a1a2e/2563eb?text=${encodeURIComponent(g.title.substring(0, 10))}`
                         }}
                       />
                       {d > 0 && (
@@ -309,6 +395,16 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
             })}
           </div>
         </section>
+      )}
+
+      {/* Payment Modal */}
+      {game && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          gameTitle={game.title}
+          amount={game.salePrice}
+        />
       )}
     </div>
   )

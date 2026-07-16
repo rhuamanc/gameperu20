@@ -1,16 +1,40 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Banner } from '@/lib/types'
+import Link from 'next/link'
+import { Banner, Game } from '@/lib/types'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface HeroProps {
   banners: Banner[]
+  games: Game[]
 }
 
-export default function Hero({ banners }: HeroProps) {
+export default function Hero({ banners, games }: HeroProps) {
   const [current, setCurrent] = useState(0)
   const active = banners.filter(b => b.active)
+
+  const normalize = (text: string) =>
+    text
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim()
+
+  const getBannerTargetHref = (banner: Banner) => {
+    const queryText = normalize(`${banner.title} ${banner.subtitle}`)
+    const queryWords = queryText.split(' ').filter(Boolean)
+
+    const matched = games.find(game => {
+      const title = normalize(game.title)
+      const slug = normalize(game.slug)
+      return queryWords.every(word => title.includes(word) || slug.includes(word))
+    })
+
+    return matched ? `/juego/${matched.slug || matched.id}` : '/tienda'
+  }
 
   useEffect(() => {
     if (active.length <= 1) return
@@ -57,14 +81,12 @@ export default function Hero({ banners }: HeroProps) {
               </span>
             </div>
             <div className="mt-5 flex items-center gap-3">
-              <a
-                href="https://wa.me/51905882260?text=Hola%2C%20me%20interesa%20comprar%20un%20juego."
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href={getBannerTargetHref(banner)}
                 className="px-6 py-3 bg-brand-orange hover:bg-brand-orangeLight text-white font-black rounded-xl transition-all hover:scale-105 text-sm"
               >
                 {banner.ctaText || 'COMPRAR AHORA'}
-              </a>
+              </Link>
               <span className="text-xs text-gray-400">Edición Digital</span>
             </div>
           </div>

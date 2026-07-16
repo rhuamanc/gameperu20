@@ -7,6 +7,7 @@ export interface Game {
   salePrice: number
   coverImage: string
   horizontalImage?: string
+  gameplayUrl?: string
   categories: string[]
   isHot: boolean
   hasDenuvo: boolean

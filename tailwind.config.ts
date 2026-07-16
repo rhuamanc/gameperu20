@@ -16,8 +16,10 @@ const config: Config = {
           hover: '#22223b',
         },
         brand: {
-          orange: '#f97316',
-          orangeLight: '#fb923c',
+          orange: '#dc2626',
+          orangeLight: '#2563eb',
+          blue: '#2563eb',
+          blueLight: '#60a5fa',
           yellow: '#fbbf24',
           green: '#22c55e',
           greenDark: '#16a34a',

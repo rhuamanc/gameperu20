@@ -169,10 +169,10 @@ export default function AdminBannersPage() {
                 {/* Preview */}
                 <div className="sm:w-48 h-28 flex-shrink-0 relative overflow-hidden">
                   <img
-                    src={banner.image || `https://placehold.co/400x200/1a1a2e/f97316?text=${encodeURIComponent(banner.title)}`}
+                    src={banner.image || `https://placehold.co/400x200/1a1a2e/2563eb?text=${encodeURIComponent(banner.title)}`}
                     alt={banner.title}
                     className="w-full h-full object-cover"
-                    onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/400x200/1a1a2e/f97316?text=${encodeURIComponent(banner.title)}` }}
+                    onError={e => { (e.target as HTMLImageElement).src = `https://placehold.co/400x200/1a1a2e/2563eb?text=${encodeURIComponent(banner.title)}` }}
                   />
                   {!banner.active && (
                     <div className="absolute inset-0 bg-black/60 flex items-center justify-center">

@@ -67,7 +67,7 @@ export default function Footer() {
             <p className="text-gray-500 text-sm mb-2">soportegameperu+20@gmail.com</p>
             <p className="text-gray-500 text-sm mb-4">Soporte constante</p>
             <a
-              href="https://wa.me/51905882260?text=Hola%20KiroGaming%2C%20estoy%20interesado%20en%20un%20juego."
+              href="https://wa.me/51950352842?text=Hola%20GamePeru%2B20%2C%20estoy%20interesado%20en%20un%20juego."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-brand-green hover:bg-brand-greenDark text-white text-sm font-semibold rounded-xl transition-all"
@@ -112,7 +112,7 @@ export default function Footer() {
       <div className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-gray-600 text-xs">© 2026 GamePeru+20 S.A.C. Todos los derechos reservados.</p>
-          <p className="text-gray-700 text-xs">Garantizado por Grupo GenIA</p>
+          <p className="text-gray-700 text-xs">Garantizado </p>
         </div>
       </div>
     </footer>

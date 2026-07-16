@@ -22,26 +22,26 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-[--bg-primary] to-[--bg-secondary]">
       {/* Hero Carousel */}
-      <Hero banners={displayBanners} />
+      <Hero banners={displayBanners} games={displayGames} />
 
       {/* Featured Games Section */}
       {featuredGames.length > 0 && (
-        <GameSection title="Juegos Destacados" games={featuredGames.slice(0, 6)} viewAllHref="/tienda" />
+        <GameSection title="Juegos Destacados" games={featuredGames} viewAllHref="/tienda" />
       )}
 
       {/* Hot Games Section */}
       {hotGames.length > 0 && (
-        <GameSection title="🔥 Trending" games={hotGames.slice(0, 6)} viewAllHref="/tienda" />
+        <GameSection title="🔥 Trending" games={hotGames} viewAllHref="/tienda" />
       )}
 
       {/* Indie Games Section */}
       {indieGames.length > 0 && (
-        <GameSection title="Juegos Indie" games={indieGames.slice(0, 6)} viewAllHref="/tienda" />
+        <GameSection title="Juegos Indie" games={indieGames} viewAllHref="/tienda" />
       )}
 
       {/* Recently Added Section */}
       {newGames.length > 0 && (
-        <GameSection title="Agregados Recientemente" games={newGames.slice(0, 6)} viewAllHref="/tienda" />
+        <GameSection title="Agregados Recientemente" games={newGames} viewAllHref="/tienda" />
       )}
 
       {/* Promotional Banner */}
@@ -55,7 +55,7 @@ export default function Home() {
           </p>
           <a
             href="/tienda"
-            className="inline-block bg-[--br-orange] hover:bg-orange-600 text-white font-bold py-3 px-8 rounded-lg transition-colors"
+            className="inline-block bg-brand-orange hover:bg-brand-orangeLight text-white font-bold py-3 px-8 rounded-lg transition-colors"
           >
             Explorar Tienda
           </a>

@@ -45,7 +45,7 @@ export default function FaqPage() {
       <div className="mt-10 p-6 bg-brand-orange/10 border border-brand-orange/20 rounded-2xl text-center">
         <p className="text-white font-semibold mb-3">¿Tienes más preguntas?</p>
         <a
-          href="https://wa.me/51905882260?text=Hola%20GamePeru%2B20%2C%20tengo%20una%20consulta."
+          href="https://wa.me/51950352842?text=Hola%20GamePeru%2B20%2C%20tengo%20una%20consulta."
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block px-6 py-3 bg-brand-green hover:bg-brand-greenDark text-white font-bold rounded-xl transition-all"
