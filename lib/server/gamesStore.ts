@@ -1,72 +1,52 @@
-import { promises as fs } from 'fs'
-import path from 'path'
 import { Game } from '@/lib/types'
 import { SEED_GAMES } from '@/lib/data'
-
-const dataDir = path.join(process.cwd(), 'data')
-const dataFile = path.join(dataDir, 'games.json')
-
-type StoredGame = Game & {
-  _deleted?: boolean
-}
+import { connectDB } from './mongodb'
+import { GameModel } from './models'
 
 function slugify(str: string) {
   return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
 }
 
-async function ensureStoreFile() {
-  await fs.mkdir(dataDir, { recursive: true })
-  try {
-    await fs.access(dataFile)
-  } catch {
-    await fs.writeFile(dataFile, JSON.stringify([], null, 2), 'utf8')
+async function ensureSeedGames() {
+  const db = await connectDB()
+  const count = await GameModel.countDocuments({})
+  if (count === 0) {
+    // Insert seed games
+    const seedWithMetadata = SEED_GAMES.map(game => ({
+      ...game,
+      _deleted: false,
+    }))
+    await GameModel.insertMany(seedWithMetadata, { ordered: false }).catch(() => {
+      // Ignore duplicate key errors
+    })
   }
-}
-
-async function readStoredGames(): Promise<StoredGame[]> {
-  await ensureStoreFile()
-  try {
-    const raw = await fs.readFile(dataFile, 'utf8')
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? (parsed as StoredGame[]) : []
-  } catch {
-    return []
-  }
-}
-
-async function writeStoredGames(games: StoredGame[]) {
-  await ensureStoreFile()
-  await fs.writeFile(dataFile, JSON.stringify(games, null, 2), 'utf8')
-}
-
-function mergeSeedWithCustom(storedGames: StoredGame[]): StoredGame[] {
-  const mergedMap = new Map<string, StoredGame>()
-
-  for (const seed of SEED_GAMES) {
-    mergedMap.set(seed.id, seed)
-  }
-
-  for (const custom of storedGames) {
-    mergedMap.set(custom.id, custom)
-  }
-
-  return Array.from(mergedMap.values())
 }
 
 export async function getAllGames(): Promise<Game[]> {
-  const custom = await readStoredGames()
-  return mergeSeedWithCustom(custom)
+  await connectDB()
+  await ensureSeedGames()
+  const games = await GameModel.find({}).lean()
+  return games.map(g => {
+    const { _deleted, ...doc } = g as any
+    return doc as Game
+  })
 }
 
 export async function getVisibleGames(): Promise<Game[]> {
-  const custom = await readStoredGames()
-  const merged = mergeSeedWithCustom(custom)
-  return merged.filter(game => !game._deleted)
+  await connectDB()
+  await ensureSeedGames()
+  const games = await GameModel.find({ _deleted: { $ne: true } }).lean()
+  return games.map(g => {
+    const { _deleted, ...doc } = g as any
+    return doc as Game
+  })
 }
 
 export async function createGame(input: Omit<Game, 'id' | 'createdAt'>): Promise<Game> {
-  const custom = await readStoredGames()
-  const usedSlugs = new Set((await getVisibleGames()).map(g => g.slug).filter(Boolean))
+  await connectDB()
+  
+  const visibleGames = await getVisibleGames()
+  const usedSlugs = new Set(visibleGames.map(g => g.slug).filter(Boolean))
 
   const base = slugify(input.slug || input.title) || `juego-${Date.now()}`
   let slug = base
@@ -83,25 +63,25 @@ export async function createGame(input: Omit<Game, 'id' | 'createdAt'>): Promise
     createdAt: new Date().toISOString(),
   }
 
-  const next: StoredGame[] = [newGame, ...custom]
-  await writeStoredGames(next)
+  await GameModel.create(newGame)
   return newGame
 }
 
 export async function updateGameById(id: string, updates: Partial<Game>): Promise<Game | null> {
-  const all = await getVisibleGames()
-  const existing = all.find(g => g.id === id)
+  await connectDB()
+  
+  const existing = await GameModel.findOne({ id, _deleted: { $ne: true } }).lean()
   if (!existing) return null
 
-  const custom = await readStoredGames()
+  const visibleGames = await getVisibleGames()
   const usedSlugs = new Set(
-    all.filter(g => g.id !== id).map(g => g.slug).filter(Boolean)
+    visibleGames.filter(g => g.id !== id).map(g => g.slug).filter(Boolean)
   )
 
   const merged: Game = {
     ...existing,
     ...updates,
-  }
+  } as Game
 
   const desiredSlug = slugify(merged.slug || merged.title) || `juego-${Date.now()}`
   let uniqueSlug = desiredSlug
@@ -112,47 +92,39 @@ export async function updateGameById(id: string, updates: Partial<Game>): Promis
   }
   merged.slug = uniqueSlug
 
-  // Persist updates into custom store (for both seed ids and custom ids)
-  const filtered = custom.filter(g => g.id !== id)
-  const next: StoredGame[] = [merged, ...filtered]
-  await writeStoredGames(next)
-
+  await GameModel.updateOne({ id }, merged)
   return merged
 }
 
 export async function deleteGameById(id: string): Promise<boolean> {
-  const custom = await readStoredGames()
-  const all = await getVisibleGames()
-  const target = all.find(g => g.id === id)
+  await connectDB()
+  
+  const visibleGames = await getVisibleGames()
+  const target = visibleGames.find(g => g.id === id)
   if (!target) return false
 
   const isSeed = SEED_GAMES.some(g => g.id === id)
 
   if (isSeed) {
-    const tombstone: StoredGame = { ...target, _deleted: true }
-    const filtered = custom.filter(g => g.id !== id)
-    await writeStoredGames([tombstone, ...filtered])
+    // Soft delete seed games
+    await GameModel.updateOne({ id }, { _deleted: true })
     return true
   }
 
-  const next = custom.filter(g => g.id !== id)
-  await writeStoredGames(next)
-  return next.length !== custom.length
+  // Hard delete custom games
+  const result = await GameModel.deleteOne({ id })
+  return result.deletedCount > 0
 }
 
 export async function upsertManyGames(games: Game[]): Promise<void> {
   if (!games.length) return
+  await connectDB()
 
-  const custom = await readStoredGames()
-  const mergedById = new Map<string, StoredGame>()
-
-  for (const existing of custom) {
-    mergedById.set(existing.id, existing)
+  for (const game of games) {
+    await GameModel.updateOne(
+      { id: game.id },
+      { ...game, _deleted: false },
+      { upsert: true }
+    )
   }
-
-  for (const incoming of games) {
-    mergedById.set(incoming.id, incoming)
-  }
-
-  await writeStoredGames(Array.from(mergedById.values()))
 }

@@ -17,6 +17,7 @@
     "@whiskeysockets/baileys": "^7.0.0-rc13",
     "jimp": "^1.6.1",
     "lucide-react": "^0.400.0",
+    "mongoose": "^9.7.4",
     "next": "^16.2.10",
     "pino": "^10.3.1",
     "react": "^18",

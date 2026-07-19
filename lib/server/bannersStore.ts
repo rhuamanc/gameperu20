@@ -1,128 +1,98 @@
-import { promises as fs } from 'fs'
-import path from 'path'
 import { Banner } from '@/lib/types'
 import { SEED_BANNERS } from '@/lib/data'
+import { connectDB } from './mongodb'
+import { BannerModel } from './models'
 
-const dataDir = path.join(process.cwd(), 'data')
-const dataFile = path.join(dataDir, 'banners.json')
-
-async function ensureStoreFile() {
-  await fs.mkdir(dataDir, { recursive: true })
-  try {
-    await fs.access(dataFile)
-  } catch {
-    await fs.writeFile(dataFile, JSON.stringify([], null, 2), 'utf8')
+async function ensureSeedBanners() {
+  await connectDB()
+  const count = await BannerModel.countDocuments({})
+  if (count === 0) {
+    const bannerWithMetadata = SEED_BANNERS.map(banner => ({
+      ...banner,
+      _deleted: false,
+    }))
+    await BannerModel.insertMany(bannerWithMetadata, { ordered: false }).catch(() => {
+      // Ignore duplicate key errors
+    })
   }
-}
-
-async function readStoredBanners(): Promise<Banner[]> {
-  await ensureStoreFile()
-  try {
-    const raw = await fs.readFile(dataFile, 'utf8')
-    const parsed = JSON.parse(raw)
-    return Array.isArray(parsed) ? (parsed as Banner[]) : []
-  } catch {
-    return []
-  }
-}
-
-async function writeStoredBanners(banners: Banner[]) {
-  await ensureStoreFile()
-  await fs.writeFile(dataFile, JSON.stringify(banners, null, 2), 'utf8')
-}
-
-function sortByOrder(banners: Banner[]): Banner[] {
-  return [...banners].sort((a, b) => a.order - b.order)
-}
-
-function mergeSeedWithCustom(storedBanners: Banner[]): Banner[] {
-  const mergedMap = new Map<string, Banner>()
-
-  for (const seed of SEED_BANNERS) {
-    mergedMap.set(seed.id, seed)
-  }
-
-  for (const custom of storedBanners) {
-    mergedMap.set(custom.id, custom)
-  }
-
-  return sortByOrder(Array.from(mergedMap.values()))
 }
 
 export async function getAllBanners(): Promise<Banner[]> {
-  const custom = await readStoredBanners()
-  return mergeSeedWithCustom(custom)
+  await connectDB()
+  await ensureSeedBanners()
+  const banners = await BannerModel.find({}).lean()
+  return banners.map(b => {
+    const { _deleted, ...doc } = b as any
+    return doc as Banner
+  })
+}
+
+export async function getVisibleBanners(): Promise<Banner[]> {
+  await connectDB()
+  await ensureSeedBanners()
+  const banners = await BannerModel.find({ _deleted: { $ne: true } }).lean()
+  return banners.map(b => {
+    const { _deleted, ...doc } = b as any
+    return doc as Banner
+  })
 }
 
 export async function createBanner(input: Omit<Banner, 'id'>): Promise<Banner> {
-  const custom = await readStoredBanners()
+  await connectDB()
 
   const newBanner: Banner = {
     ...input,
     id: crypto.randomUUID(),
   }
 
-  const next = sortByOrder([newBanner, ...custom])
-  await writeStoredBanners(next)
+  await BannerModel.create(newBanner)
   return newBanner
 }
 
 export async function updateBannerById(id: string, updates: Partial<Banner>): Promise<Banner | null> {
-  const all = await getAllBanners()
-  const existing = all.find(b => b.id === id)
+  await connectDB()
+
+  const existing = await BannerModel.findOne({ id, _deleted: { $ne: true } }).lean()
   if (!existing) return null
 
   const merged: Banner = {
     ...existing,
     ...updates,
-    id,
-  }
+  } as Banner
 
-  const custom = await readStoredBanners()
-  const filtered = custom.filter(b => b.id !== id)
-  const next = sortByOrder([merged, ...filtered])
-  await writeStoredBanners(next)
-
+  await BannerModel.updateOne({ id }, merged)
   return merged
 }
 
 export async function deleteBannerById(id: string): Promise<boolean> {
-  const custom = await readStoredBanners()
+  await connectDB()
+
+  const visibleBanners = await getVisibleBanners()
+  const target = visibleBanners.find(b => b.id === id)
+  if (!target) return false
+
   const isSeed = SEED_BANNERS.some(b => b.id === id)
 
   if (isSeed) {
-    const all = await getAllBanners()
-    const target = all.find(b => b.id === id)
-    if (!target) return false
-
-    const disabledSeed: Banner = {
-      ...target,
-      active: false,
-    }
-
-    const filtered = custom.filter(b => b.id !== id)
-    await writeStoredBanners(sortByOrder([disabledSeed, ...filtered]))
+    // Soft delete seed banners
+    await BannerModel.updateOne({ id }, { _deleted: true })
     return true
   }
 
-  const next = custom.filter(b => b.id !== id)
-  await writeStoredBanners(sortByOrder(next))
-  return next.length !== custom.length
+  // Hard delete custom banners
+  const result = await BannerModel.deleteOne({ id })
+  return result.deletedCount > 0
 }
 
 export async function upsertManyBanners(banners: Banner[]): Promise<void> {
   if (!banners.length) return
+  await connectDB()
 
-  const custom = await readStoredBanners()
-  const mergedById = new Map<string, Banner>()
-
-  for (const existing of custom) {
-    mergedById.set(existing.id, existing)
+  for (const banner of banners) {
+    await BannerModel.updateOne(
+      { id: banner.id },
+      { ...banner, _deleted: false },
+      { upsert: true }
+    )
   }
-
-  for (const incoming of banners) {
-    mergedById.set(incoming.id, incoming)
-  }
-
-  await writeStoredBanners(sortByOrder(Array.from(mergedById.values())))
 }
