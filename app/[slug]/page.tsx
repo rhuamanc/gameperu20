@@ -11,8 +11,9 @@ export function generateStaticParams() {
   return pages.map(p => ({ slug: p.slug }))
 }
 
-export default function StaticPage({ params }: { params: { slug: string } }) {
-  const page = pages.find(p => p.slug === params.slug)
+export default async function StaticPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const page = pages.find(p => p.slug === slug)
   if (!page) return null
 
   return (

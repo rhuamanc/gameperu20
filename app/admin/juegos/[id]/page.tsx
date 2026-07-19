@@ -1,14 +1,14 @@
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { useRouter, useParams } from 'next/navigation'
 import { useGames } from '@/lib/hooks'
 import GameForm from '@/components/admin/GameForm'
 import { Game } from '@/lib/types'
 import { ArrowLeft } from 'lucide-react'
-import { use } from 'react'
 
-export default function EditarJuegoPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function EditarJuegoPage() {
+  const params = useParams()
+  const id = params.id as string
   const router = useRouter()
   const { games, updateGame } = useGames()
 
