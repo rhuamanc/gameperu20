@@ -1,5 +1,30 @@
 [
   {
+    "id": "1",
+    "title": "CRIMSON DESERT Deluxe edition",
+    "slug": "crimson-desert-deluxe-edition",
+    "platform": "Steam",
+    "originalPrice": 0,
+    "salePrice": 25,
+    "coverImage": "https://cdn.dotpe.in/longtail/store-items/8071193/JVgC1l95.webp",
+    "categories": [
+      "Aventura",
+      "Acción"
+    ],
+    "isHot": false,
+    "hasDenuvo": false,
+    "isFeatured": true,
+    "isNew": false,
+    "accountType": "offline",
+    "description": "Crimson Desert xx es un juego de acción y aventura en mundo abierto ambientado en Pywel. Acompaña a Kliff en su viaje para reunir a los Melenas Grises y salvar el continente. Zonas salvajes, ciudades, ruinas antiguas y el misterioso Abismo; forja tu propio camino a través del combate y la exploración.",
+    "createdAt": "2026-07-14T23:36:30.637Z",
+    "horizontalImage": "https://cdn.idealo.com/folder/Product/211152/3/211152393/s11_produktbild_max_1/crimson-desert-deluxe-steelbook-edition-pc.jpg",
+    "badge": "",
+    "gameplayUrl": "https://youtu.be/IhzQcpZfbVU",
+    "aboutProduct": "-Acceso permanente: Juega cuando quieras, tu registro siempre estará en GamePeru+20.\n\n-Progreso: Guarda tu partida de forma segura, sin problemas.\n\n-Disfruta sin límites: Disfruta del juego todo el tiempo que desees.\n\n-Asistencia: Soporte constante y Garantía, siempre puedes contactarnos.",
+    "redeemGuide": " Para reclamar las recompensas de la Edición Deluxe de Crimson Desert dentro del juego, debes acceder al menú principal, \ningresar a la pestaña «Otros» y seleccionar «Complementos». \nAllí encontrarás tu paquete Deluxe (conjunto de placas de Kairos, escudo de Balgran y arreos de Exclaire) listo para transferirse a tu cofre de suministros."
+  },
+  {
     "title": "Lost Soul Aside Deluxe Edition",
     "slug": "lost-soul-aside-deluxe-edition",
     "platform": "Steam",
@@ -349,29 +374,6 @@
     "horizontalImage": "https://i.ytimg.com/vi/uPJf_1snjIw/maxresdefault.jpg",
     "badge": "",
     "gameplayUrl": "https://youtu.be/uPJf_1snjIw"
-  },
-  {
-    "id": "1",
-    "title": "CRIMSON DESERT Deluxe edition",
-    "slug": "crimson-desert-deluxe-edition",
-    "platform": "Steam",
-    "originalPrice": 0,
-    "salePrice": 25,
-    "coverImage": "https://cdn.dotpe.in/longtail/store-items/8071193/JVgC1l95.webp",
-    "categories": [
-      "Aventura",
-      "Acción"
-    ],
-    "isHot": false,
-    "hasDenuvo": false,
-    "isFeatured": true,
-    "isNew": false,
-    "accountType": "offline",
-    "description": "Crimson Desert es un juego de acción y aventura en mundo abierto ambientado en Pywel. Acompaña a Kliff en su viaje para reunir a los Melenas Grises y salvar el continente. Zonas salvajes, ciudades, ruinas antiguas y el misterioso Abismo; forja tu propio camino a través del combate y la exploración.",
-    "createdAt": "2026-07-14T23:36:30.637Z",
-    "horizontalImage": "https://cdn.idealo.com/folder/Product/211152/3/211152393/s11_produktbild_max_1/crimson-desert-deluxe-steelbook-edition-pc.jpg",
-    "badge": "",
-    "gameplayUrl": "https://youtu.be/IhzQcpZfbVU"
   },
   {
     "title": "Motorfest Deluxe Edition",
