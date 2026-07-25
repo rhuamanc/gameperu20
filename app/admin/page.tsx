@@ -43,7 +43,7 @@ export default function AdminDashboard() {
       <h2 className="text-lg font-bold text-white mb-4">Acciones rápidas</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         <Link
-          href="/admin/juegos/nuevo"
+          href="/adminstyven24/juegos/nuevo"
           className="flex items-center gap-4 p-5 bg-bg-card border border-white/5 hover:border-brand-orange/40 rounded-2xl transition-all group"
         >
           <div className="w-12 h-12 bg-brand-orange/10 group-hover:bg-brand-orange/20 rounded-xl flex items-center justify-center transition-all">
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
           </div>
         </Link>
         <Link
-          href="/admin/banners"
+          href="/adminstyven24/banners"
           className="flex items-center gap-4 p-5 bg-bg-card border border-white/5 hover:border-brand-orange/40 rounded-2xl transition-all group"
         >
           <div className="w-12 h-12 bg-blue-500/10 group-hover:bg-blue-500/20 rounded-xl flex items-center justify-center transition-all">
@@ -91,7 +91,7 @@ export default function AdminDashboard() {
               <p className="text-gray-500 line-through text-xs">S/ {game.originalPrice.toFixed(2)}</p>
             </div>
             <Link
-              href={`/admin/juegos/${game.id}`}
+              href={`/adminstyven24/juegos/${game.id}`}
               className="px-3 py-1.5 bg-bg-primary border border-white/10 hover:border-brand-orange/40 text-gray-400 hover:text-white text-xs rounded-lg transition-all flex-shrink-0"
             >
               Editar

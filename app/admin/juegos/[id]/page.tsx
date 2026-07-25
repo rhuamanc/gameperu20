@@ -28,14 +28,14 @@ export default function EditarJuegoPage() {
   const handleSubmit = async (data: Omit<Game, 'id' | 'createdAt'>) => {
     const slug = uniqueSlug(data.slug || data.title, id)
     await updateGame(id, { ...data, slug })
-    router.push('/admin/juegos')
+    router.push('/adminstyven24/juegos')
   }
 
   if (!game && games.length > 0) {
     return (
       <div className="p-6 text-center">
         <p className="text-gray-400">Juego no encontrado.</p>
-        <button onClick={() => router.push('/admin/juegos')} className="mt-4 text-brand-orange hover:underline text-sm">
+        <button onClick={() => router.push('/adminstyven24/juegos')} className="mt-4 text-brand-orange hover:underline text-sm">
           Volver al listado
         </button>
       </div>
@@ -66,7 +66,7 @@ export default function EditarJuegoPage() {
           <GameForm
             initial={game}
             onSubmit={handleSubmit}
-            onCancel={() => router.push('/admin/juegos')}
+            onCancel={() => router.push('/adminstyven24/juegos')}
           />
         </div>
       )}

@@ -28,7 +28,7 @@ export default function NuevoJuegoPage() {
       slug,
     }
     await addGame(gamePayload)
-    router.push('/admin/juegos')
+    router.push('/adminstyven24/juegos')
   }
 
   return (
@@ -49,7 +49,7 @@ export default function NuevoJuegoPage() {
       <div className="bg-bg-card border border-white/5 rounded-2xl p-6">
         <GameForm
           onSubmit={handleSubmit}
-          onCancel={() => router.push('/admin/juegos')}
+          onCancel={() => router.push('/adminstyven24/juegos')}
         />
       </div>
     </div>

@@ -1,15 +1,70 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import AdminSidebar from '@/components/admin/AdminSidebar'
-
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'admin123'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [password, setPassword] = useState('')
   const [authenticated, setAuthenticated] = useState(false)
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [checkingSession, setCheckingSession] = useState(true)
+
+  useEffect(() => {
+    let mounted = true
+
+    const checkSession = async () => {
+      try {
+        const res = await fetch('/api/admin/session', { cache: 'no-store' })
+        if (!mounted) return
+        setAuthenticated(res.ok)
+      } catch {
+        if (!mounted) return
+        setAuthenticated(false)
+      } finally {
+        if (mounted) setCheckingSession(false)
+      }
+    }
+
+    void checkSession()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const handleLogin = async () => {
+    try {
+      setLoading(true)
+      setError('')
+
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ message: 'Contraseña incorrecta' }))
+        setError(data.message || 'Contraseña incorrecta')
+        return
+      }
+
+      setAuthenticated(true)
+    } catch {
+      setError('No se pudo iniciar sesión')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4">
+        <div className="w-10 h-10 border-2 border-brand-orange border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   if (!authenticated) {
     return (
@@ -31,11 +86,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onChange={e => { setPassword(e.target.value); setError('') }}
               onKeyDown={e => {
                 if (e.key === 'Enter') {
-                  if (password === ADMIN_PASSWORD) {
-                    setAuthenticated(true)
-                  } else {
-                    setError('Contraseña incorrecta')
-                  }
+                  void handleLogin()
                 }
               }}
               placeholder="••••••••"
@@ -44,19 +95,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             />
             {error && <p className="text-red-400 text-xs mb-3">{error}</p>}
             <button
-              onClick={() => {
-                if (password === ADMIN_PASSWORD) {
-                  setAuthenticated(true)
-                } else {
-                  setError('Contraseña incorrecta')
-                }
-              }}
-              className="w-full py-2.5 bg-brand-orange hover:bg-brand-orangeLight text-white font-bold rounded-xl transition-all"
+              onClick={() => { void handleLogin() }}
+              disabled={loading}
+              className="w-full py-2.5 bg-brand-orange hover:bg-brand-orangeLight disabled:opacity-60 text-white font-bold rounded-xl transition-all"
             >
-              Ingresar
+              {loading ? 'Validando...' : 'Ingresar'}
             </button>
             <p className="text-gray-600 text-xs text-center mt-4">
-              Contraseña por defecto: <code className="text-gray-500">admin123</code>
+              Usa <span className="text-gray-400">styven24 + token</span>.
             </p>
           </div>
         </div>

@@ -1,17 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { LayoutDashboard, Gamepad2, ImageIcon, ChevronRight, LogOut, Home } from 'lucide-react'
 
 const navItems = [
-  { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
-  { href: '/admin/juegos', label: 'Juegos', icon: Gamepad2 },
-  { href: '/admin/banners', label: 'Banners', icon: ImageIcon },
+  { href: '/adminstyven24', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/adminstyven24/juegos', label: 'Juegos', icon: Gamepad2 },
+  { href: '/adminstyven24/banners', label: 'Banners', icon: ImageIcon },
 ]
 
 export default function AdminSidebar() {
   const pathname = usePathname()
+  const router = useRouter()
 
   return (
     <aside className="w-64 flex-shrink-0 bg-bg-secondary border-r border-white/5 min-h-screen flex flex-col">
@@ -59,6 +60,17 @@ export default function AdminSidebar() {
           <Home size={18} />
           Ver sitio
         </Link>
+        <button
+          onClick={async () => {
+            await fetch('/api/admin/logout', { method: 'POST' })
+            router.push('/adminstyven24')
+            router.refresh()
+          }}
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition-all"
+        >
+          <LogOut size={18} />
+          Cerrar sesión
+        </button>
       </div>
     </aside>
   )

@@ -44,7 +44,7 @@ export default function Navbar() {
               <Search size={18} />
             </Link>
             <Link
-              href="/admin"
+              href="/adminstyven24"
               className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-brand-orange border border-brand-orange/40 rounded-lg hover:bg-brand-orange/10 transition-all"
             >
               <User size={14} />
@@ -73,7 +73,7 @@ export default function Navbar() {
           <Link href="/tienda?q=hot" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>🔥 Ofertas</Link>
           <Link href="/tienda?q=nuevo" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>Nuevos</Link>
           <Link href="/faq" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>FAQ</Link>
-          <Link href="/admin" className="block px-3 py-2 text-sm text-brand-orange font-semibold rounded-lg" onClick={() => setMenuOpen(false)}>Panel Admin</Link>
+          <Link href="/adminstyven24" className="block px-3 py-2 text-sm text-brand-orange font-semibold rounded-lg" onClick={() => setMenuOpen(false)}>Panel Admin</Link>
         </div>
       )}
     </nav>

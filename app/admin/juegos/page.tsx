@@ -28,7 +28,7 @@ export default function AdminJuegosPage() {
           <p className="text-gray-500 text-sm mt-1">{loaded ? games.length : '—'} juegos en el catálogo</p>
         </div>
         <Link
-          href="/admin/juegos/nuevo"
+          href="/adminstyven24/juegos/nuevo"
           className="flex items-center gap-2 px-4 py-2.5 bg-brand-orange hover:bg-brand-orangeLight text-white font-bold text-sm rounded-xl transition-all"
         >
           <Plus size={16} />
@@ -102,7 +102,7 @@ export default function AdminJuegosPage() {
                 {/* Actions */}
                 <div className="col-span-3 flex items-center justify-end gap-2">
                   <Link
-                    href={`/admin/juegos/${game.id}`}
+                    href={`/adminstyven24/juegos/${game.id}`}
                     className="p-2 bg-bg-primary border border-white/10 hover:border-brand-orange/40 text-gray-400 hover:text-white rounded-lg transition-all"
                     title="Editar"
                   >
