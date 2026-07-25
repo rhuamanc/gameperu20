@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { Game, Banner } from './types'
+import { Game, Banner, StreamingProduct } from './types'
 import { SEED_GAMES, SEED_BANNERS } from './data'
 
 const GAMES_KEY = 'kgstore_games'
@@ -226,4 +226,77 @@ export function useBanners() {
   }, [setBanners])
 
   return { banners, loaded, addBanner, updateBanner, deleteBanner }
+}
+
+export function useStreaming() {
+  const [items, setItemsState] = useState<StreamingProduct[]>([])
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    let mounted = true
+
+    const fetchItems = async () => {
+      try {
+        const res = await fetch('/api/streaming', { cache: 'no-store' })
+        if (!res.ok) throw new Error('failed')
+        const data = (await res.json()) as StreamingProduct[]
+        if (mounted) {
+          setItemsState(data)
+          setLoaded(true)
+        }
+      } catch {
+        if (mounted) {
+          setItemsState([])
+          setLoaded(true)
+        }
+      }
+    }
+
+    fetchItems()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const setItems = useCallback((updater: StreamingProduct[] | ((prev: StreamingProduct[]) => StreamingProduct[])) => {
+    setItemsState(prev => {
+      const next = typeof updater === 'function' ? updater(prev) : updater
+      return next
+    })
+  }, [])
+
+  const addStreaming = useCallback(async (item: Omit<StreamingProduct, 'id' | 'createdAt'>) => {
+    const res = await fetch('/api/streaming', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(item),
+    })
+    if (!res.ok) throw new Error('No se pudo crear el producto de streaming')
+    const created = (await res.json()) as StreamingProduct
+    setItems(prev => [created, ...prev])
+    return created
+  }, [setItems])
+
+  const updateStreaming = useCallback(async (id: string, updates: Partial<StreamingProduct>) => {
+    const res = await fetch(`/api/streaming/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updates),
+    })
+    if (!res.ok) throw new Error('No se pudo actualizar el producto de streaming')
+    const updated = (await res.json()) as StreamingProduct
+    setItems(prev => prev.map(item => (item.id === id ? updated : item)))
+    return updated
+  }, [setItems])
+
+  const deleteStreaming = useCallback(async (id: string) => {
+    const res = await fetch(`/api/streaming/${id}`, {
+      method: 'DELETE',
+    })
+    if (!res.ok) throw new Error('No se pudo eliminar el producto de streaming')
+    setItems(prev => prev.filter(item => item.id !== id))
+  }, [setItems])
+
+  return { items, loaded, addStreaming, updateStreaming, deleteStreaming }
 }

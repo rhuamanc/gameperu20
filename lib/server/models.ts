@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { Game, Banner } from '@/lib/types'
+import { Game, Banner, StreamingProduct } from '@/lib/types'
 
 // Extended types for MongoDB documents
 interface GameDocument extends Game {
@@ -7,6 +7,10 @@ interface GameDocument extends Game {
 }
 
 interface BannerDocument extends Banner {
+  _deleted?: boolean
+}
+
+interface StreamingDocument extends StreamingProduct {
   _deleted?: boolean
 }
 
@@ -59,6 +63,27 @@ const bannerSchema = new mongoose.Schema<BannerDocument>(
   { timestamps: false }
 )
 
+const streamingSchema = new mongoose.Schema<StreamingDocument>(
+  {
+    id: { type: String, required: true, unique: true },
+    title: { type: String, required: true },
+    provider: { type: String, required: true },
+    plan: { type: String, required: true },
+    duration: { type: String, required: true },
+    originalPrice: { type: Number, required: true },
+    salePrice: { type: Number, required: true },
+    image: { type: String, required: true },
+    description: { type: String, default: '' },
+    active: { type: Boolean, default: true },
+    featured: { type: Boolean, default: false },
+    badge: { type: String, default: '' },
+    createdAt: { type: String, required: true },
+    _deleted: { type: Boolean, default: false },
+  } as any,
+  { timestamps: false }
+)
+
 // Create or get models
 export const GameModel = mongoose.models.Game || mongoose.model<GameDocument>('Game', gameSchema)
 export const BannerModel = mongoose.models.Banner || mongoose.model<BannerDocument>('Banner', bannerSchema)
+export const StreamingModel = mongoose.models.Streaming || mongoose.model<StreamingDocument>('Streaming', streamingSchema)

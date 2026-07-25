@@ -37,6 +37,22 @@ export interface Banner {
   order: number
 }
 
+export interface StreamingProduct {
+  id: string
+  title: string
+  provider: 'Netflix' | 'HBO Max' | 'Disney+' | 'Prime Video' | 'Spotify' | 'YouTube Premium' | 'Otro'
+  plan: string
+  duration: string
+  originalPrice: number
+  salePrice: number
+  image: string
+  description: string
+  active: boolean
+  featured: boolean
+  badge?: string
+  createdAt: string
+}
+
 export type Category =
   | 'Acción'
   | 'Aventura'

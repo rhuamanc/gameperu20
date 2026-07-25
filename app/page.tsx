@@ -44,6 +44,20 @@ export default function Home() {
         <GameSection title="Agregados Recientemente" games={newGames} viewAllHref="/tienda" />
       )}
 
+      {/* Streaming CTA */}
+      <section className="px-4 pb-6">
+        <div className="max-w-7xl mx-auto bg-gradient-to-r from-[#1f1f3a] to-[#11244a] border border-white/10 rounded-2xl p-6 sm:p-8">
+          <h3 className="text-2xl font-black text-white mb-2">¿Buscas Netflix, HBO o Disney+?</h3>
+          <p className="text-gray-300 text-sm sm:text-base mb-5">Ahora también vendemos planes de streaming con soporte y garantía.</p>
+          <a
+            href="/streaming"
+            className="inline-block px-5 py-2.5 bg-brand-orange hover:bg-brand-orangeLight text-white font-bold rounded-xl transition-all"
+          >
+            Ver planes de Streaming
+          </a>
+        </div>
+      </section>
+
       {/* Promotional Banner */}
       <section className="py-16 px-4 text-center">
         <div className="max-w-2xl mx-auto">

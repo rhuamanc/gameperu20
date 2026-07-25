@@ -3,7 +3,7 @@
 import { useGames } from '@/lib/hooks'
 import { useBanners } from '@/lib/hooks'
 import Link from 'next/link'
-import { Gamepad2, ImageIcon, TrendingUp, Package, Plus } from 'lucide-react'
+import { Gamepad2, ImageIcon, Tv, TrendingUp, Package, Plus } from 'lucide-react'
 
 export default function AdminDashboard() {
   const { games, loaded } = useGames()
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
 
       {/* Quick actions */}
       <h2 className="text-lg font-bold text-white mb-4">Acciones rápidas</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         <Link
           href="/adminstyven24/juegos/nuevo"
           className="flex items-center gap-4 p-5 bg-bg-card border border-white/5 hover:border-brand-orange/40 rounded-2xl transition-all group"
@@ -64,6 +64,18 @@ export default function AdminDashboard() {
           <div>
             <p className="font-bold text-white text-sm">Gestionar Banners</p>
             <p className="text-gray-500 text-xs">Edita los banners del hero</p>
+          </div>
+        </Link>
+        <Link
+          href="/adminstyven24/streaming"
+          className="flex items-center gap-4 p-5 bg-bg-card border border-white/5 hover:border-brand-orange/40 rounded-2xl transition-all group"
+        >
+          <div className="w-12 h-12 bg-purple-500/10 group-hover:bg-purple-500/20 rounded-xl flex items-center justify-center transition-all">
+            <Tv className="text-purple-300" size={22} />
+          </div>
+          <div>
+            <p className="font-bold text-white text-sm">Gestionar Streaming</p>
+            <p className="text-gray-500 text-xs">Netflix, HBO, Disney+ y más</p>
           </div>
         </Link>
       </div>

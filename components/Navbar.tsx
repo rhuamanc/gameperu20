@@ -33,6 +33,9 @@ export default function Navbar() {
             <Link href="/tienda?q=nuevo" className="px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all">
               Nuevos
             </Link>
+            <Link href="/streaming" className="px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all">
+              Streaming
+            </Link>
             <Link href="/faq" className="px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all">
               FAQ
             </Link>
@@ -72,6 +75,7 @@ export default function Navbar() {
           <Link href="/tienda" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>Tienda</Link>
           <Link href="/tienda?q=hot" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>🔥 Ofertas</Link>
           <Link href="/tienda?q=nuevo" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>Nuevos</Link>
+          <Link href="/streaming" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>Streaming</Link>
           <Link href="/faq" className="block px-3 py-2 text-sm text-gray-300 hover:text-white rounded-lg" onClick={() => setMenuOpen(false)}>FAQ</Link>
           <Link href="/adminstyven24" className="block px-3 py-2 text-sm text-brand-orange font-semibold rounded-lg" onClick={() => setMenuOpen(false)}>Panel Admin</Link>
         </div>

@@ -10,6 +10,10 @@ const nextConfig = {
         source: '/adminstyven24/:path*',
         destination: '/admin/:path*',
       },
+      {
+        source: '/adminstyven24/streaming',
+        destination: '/admin/streaming',
+      },
     ]
   },
   images: {

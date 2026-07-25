@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { LayoutDashboard, Gamepad2, ImageIcon, ChevronRight, LogOut, Home } from 'lucide-react'
+import { LayoutDashboard, Gamepad2, ImageIcon, Tv, ChevronRight, LogOut, Home } from 'lucide-react'
 
 const navItems = [
   { href: '/adminstyven24', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/adminstyven24/juegos', label: 'Juegos', icon: Gamepad2 },
   { href: '/adminstyven24/banners', label: 'Banners', icon: ImageIcon },
+  { href: '/adminstyven24/streaming', label: 'Streaming', icon: Tv },
 ]
 
 export default function AdminSidebar() {
