@@ -52,15 +52,17 @@ export async function createBanner(input: Omit<Banner, 'id'>): Promise<Banner> {
 export async function updateBannerById(id: string, updates: Partial<Banner>): Promise<Banner | null> {
   await connectDB()
 
-  const existing = await BannerModel.findOne({ id, _deleted: { $ne: true } }).lean()
+  const existing = await BannerModel.findOne({ id }).lean()
   if (!existing) return null
 
+  const { _id, __v, _deleted, ...rest } = existing as any
+
   const merged: Banner = {
-    ...existing,
+    ...rest,
     ...updates,
   } as Banner
 
-  await BannerModel.updateOne({ id }, merged)
+  await BannerModel.updateOne({ id }, { ...merged, _deleted: false })
   return merged
 }
 

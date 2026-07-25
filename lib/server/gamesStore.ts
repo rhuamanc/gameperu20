@@ -70,8 +70,10 @@ export async function createGame(input: Omit<Game, 'id' | 'createdAt'>): Promise
 export async function updateGameById(id: string, updates: Partial<Game>): Promise<Game | null> {
   await connectDB()
   
-  const existing = await GameModel.findOne({ id, _deleted: { $ne: true } }).lean()
+  const existing = await GameModel.findOne({ id }).lean()
   if (!existing) return null
+
+  const { _id, __v, _deleted, ...rest } = existing as any
 
   const visibleGames = await getVisibleGames()
   const usedSlugs = new Set(
@@ -79,7 +81,7 @@ export async function updateGameById(id: string, updates: Partial<Game>): Promis
   )
 
   const merged: Game = {
-    ...existing,
+    ...rest,
     ...updates,
   } as Game
 
@@ -92,7 +94,7 @@ export async function updateGameById(id: string, updates: Partial<Game>): Promis
   }
   merged.slug = uniqueSlug
 
-  await GameModel.updateOne({ id }, merged)
+  await GameModel.updateOne({ id }, { ...merged, _deleted: false })
   return merged
 }
 
