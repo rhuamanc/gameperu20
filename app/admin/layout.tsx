@@ -101,9 +101,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             >
               {loading ? 'Validando...' : 'Ingresar'}
             </button>
-            <p className="text-gray-600 text-xs text-center mt-4">
-              Usa <span className="text-gray-400">styven24 + token</span>.
-            </p>
           </div>
         </div>
       </div>
