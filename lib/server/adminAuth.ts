@@ -6,6 +6,30 @@ function getSeed() {
   return process.env.ADMIN_TOKEN_SEED || process.env.MONGO_URI || 'gameperu20-admin-seed'
 }
 
+function getTokenTimezone() {
+  return process.env.ADMIN_TOKEN_TIMEZONE || 'America/Lima'
+}
+
+function getTokenDay(now = new Date()) {
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: getTokenTimezone(),
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+
+  const parts = formatter.formatToParts(now)
+  const year = parts.find(p => p.type === 'year')?.value
+  const month = parts.find(p => p.type === 'month')?.value
+  const day = parts.find(p => p.type === 'day')?.value
+
+  if (!year || !month || !day) {
+    return now.toISOString().slice(0, 10)
+  }
+
+  return `${year}-${month}-${day}`
+}
+
 function safeEqual(left: string, right: string) {
   if (left.length !== right.length) return false
 
@@ -35,7 +59,7 @@ function hashString(input: string) {
 }
 
 export function getCurrentAdminToken(now = new Date()) {
-  const day = now.toISOString().slice(0, 10)
+  const day = getTokenDay(now)
   return hashString(`${getSeed()}:${day}`).slice(0, 10)
 }
 
