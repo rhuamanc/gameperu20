@@ -22,7 +22,7 @@ export default function ChatWidget() {
         <div className="fixed bottom-24 right-6 z-50 w-80 bg-bg-card border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
           {/* Header */}
           <div className="bg-brand-orange px-4 py-3 flex items-center gap-3">
-            <img src="/images/logo_game.jpg" alt="GamePeru+20" className="w-10 h-10 rounded-full object-cover" />
+            <img src="/images/logo_actual.jpeg" alt="GamePeru+20" className="w-10 h-10 rounded-full object-cover" />
             <div>
               <p className="font-black text-white text-sm">¡Hola! GamePeru+20</p>
               <p className="text-blue-100 text-xs">Soporte constante</p>

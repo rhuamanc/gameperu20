@@ -71,7 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="min-h-screen bg-bg-primary flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="text-center mb-8">
-            <img src="/images/logo_game.jpg" alt="GamePeru+20" className="h-16 w-auto rounded-2xl object-contain mx-auto mb-4" />
+            <img src="/images/logo_actual.jpeg" alt="GamePeru+20" className="h-16 w-auto rounded-2xl object-contain mx-auto mb-4" />
             <h1 className="text-2xl font-black text-white">Panel Admin</h1>
             <p className="text-gray-500 text-sm mt-1">GamePeru+20</p>
           </div>

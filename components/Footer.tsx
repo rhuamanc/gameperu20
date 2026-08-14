@@ -29,7 +29,7 @@ export default function Footer() {
           <div>
             <Link href="/" className="flex items-center gap-2 mb-3">
               <Image
-                src="/images/logo_game.jpg"
+                src="/images/logo_actual.jpeg"
                 alt="Logo GamePeru+20"
                 width={32}
                 height={32}

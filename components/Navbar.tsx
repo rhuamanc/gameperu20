@@ -13,7 +13,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
-            <img src="/images/logo_game.jpg" alt="GamePeru+20" className="h-9 w-auto rounded-lg object-contain" />
+            <img src="/images/logo_actual.jpeg" alt="GamePeru+20" className="h-9 w-auto rounded-lg object-contain" />
             <span className="font-black text-white text-lg tracking-tight group-hover:text-brand-orange transition-colors">
               GamePeru+20
             </span>
