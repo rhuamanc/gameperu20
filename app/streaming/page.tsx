@@ -28,7 +28,7 @@ export default function StreamingPage() {
           {activeItems.map(item => {
             const discount = calcDiscount(item.originalPrice, item.salePrice)
             const message = encodeURIComponent(`Hola, quiero comprar ${item.title} (${item.provider} - ${item.plan}) por S/ ${item.salePrice.toFixed(2)}`)
-            const whatsapp = `https://wa.me/51950352842?text=${message}`
+            const whatsapp = `https://wa.me/51997475945?text=${message}`
 
             return (
               <article key={item.id} className="bg-bg-card border border-white/5 hover:border-brand-orange/40 rounded-2xl overflow-hidden transition-all group">

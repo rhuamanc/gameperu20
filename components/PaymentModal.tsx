@@ -44,7 +44,7 @@ export default function PaymentModal({
 
       // Codificar mensaje
       const encodedMessage = encodeURIComponent(message)
-      const whatsappNumber = '51950352842'
+      const whatsappNumber = '51997475945'
 
       const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`
       window.open(whatsappUrl, '_blank')

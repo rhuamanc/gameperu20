@@ -67,7 +67,7 @@ export default function Footer() {
             <p className="text-gray-500 text-sm mb-2">soportegameperu+20@gmail.com</p>
             <p className="text-gray-500 text-sm mb-4">Soporte constante</p>
             <a
-              href="https://wa.me/51950352842?text=Hola%20GamePeru%2B20%2C%20estoy%20interesado%20en%20un%20juego."
+              href="https://wa.me/51997475945?text=Hola%20GamePeru%2B20%2C%20estoy%20interesado%20en%20un%20juego."
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-4 py-2 bg-brand-green hover:bg-brand-greenDark text-white text-sm font-semibold rounded-xl transition-all"

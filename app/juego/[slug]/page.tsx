@@ -360,7 +360,7 @@ export default function JuegoDetallePage({ params }: { params: Promise<{ slug: s
                 Comprar Ahora
               </button>
               <a
-                href={`https://wa.me/51950352842?text=${encodeURIComponent(waMessage)}`}
+                href={`https://wa.me/51997475945?text=${encodeURIComponent(waMessage)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full py-3 bg-bg-hover hover:bg-bg-card border border-white/10 hover:border-brand-orange/40 text-white font-bold rounded-xl transition-all text-sm"
